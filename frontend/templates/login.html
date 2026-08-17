@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — MediVoice AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <i class="fa-solid fa-laptop-medical logo-icon"></i>
+            <h1>MediVoice AI</h1>
+            <p class="subtitle">AI-Based Medicine Reminder with Voice Alert</p>
+
+            <form id="loginForm" style="text-align: left;">
+                <div class="form-group">
+                    <label class="form-label" for="login-username">Username</label>
+                    <input type="text" class="form-input" id="login-username" placeholder="Enter caregiver username" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="login-password">Password</label>
+                    <input type="password" class="form-input" id="login-password" placeholder="Enter password" required>
+                </div>
+                <div id="login-error" style="color: var(--danger); font-size: 0.85rem; text-align: center; margin-bottom: 12px; display: none;"></div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fa-solid fa-right-to-bracket"></i> Sign In
+                </button>
+            </form>
+
+            <p style="margin-top: 24px; font-size: 0.78rem; color: var(--text-muted);">
+                Default credentials configured in `.env` (Fallback: <strong>admin</strong> / <strong>admin123</strong>)
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const errorDiv = document.getElementById("login-error");
+            errorDiv.style.display = "none";
+
+            const username = document.getElementById("login-username").value.trim();
+            const password = document.getElementById("login-password").value.trim();
+
+            if (!username || !password) {
+                errorDiv.textContent = "Please fill in both fields.";
+                errorDiv.style.display = "block";
+                return;
+            }
+
+            try {
+                const res = await fetch("/api/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password }),
+                });
+                const json = await res.json();
+
+                if (json.status === "success") {
+                    window.location.href = "/dashboard";
+                } else {
+                    errorDiv.textContent = json.message || "Invalid credentials.";
+                    errorDiv.style.display = "block";
+                }
+            } catch (err) {
+                errorDiv.textContent = "Cannot connect to server. Is the Python backend running?";
+                errorDiv.style.display = "block";
+            }
+        });
+    </script>
+</body>
+</html>

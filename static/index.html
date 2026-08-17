@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedAssist AI — Medication Adherence Monitor</title>
+  <meta name="description" content="Voice-based medication reminder for elderly and visually impaired patients. Automated calls in Tamil & English with caregiver SMS alerts.">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- ========== SCREEN 1: SPLASH ========== -->
+  <section id="screen-splash" class="screen screen-splash active">
+    <div class="splash-content">
+      <div class="splash-logo">💊</div>
+      <h1 class="splash-title">MedAssist AI</h1>
+      <p class="splash-tagline">Never miss a dose. Never lose a day.</p>
+      <div class="splash-loader"><div class="loader-bar"></div></div>
+    </div>
+  </section>
+
+  <!-- ========== SCREEN 2: ONBOARDING ========== -->
+  <section id="screen-onboarding" class="screen screen-onboarding">
+    <div class="onboarding-container">
+      <div class="onboarding-badge">✨ AI-Powered Safety</div>
+      <h1 class="onboarding-title">Your Parent's Medicine.<br>Your Peace of Mind.</h1>
+      <p class="onboarding-desc">MedAssist AI ensures your loved ones never miss a dose — even without a smartphone.</p>
+
+      <div class="feature-cards">
+        <div class="feature-card">
+          <div class="feature-icon">📞</div>
+          <div>
+            <h3>Voice Call Reminders</h3>
+            <p>Automated calls in Tamil & English to any basic phone. Patient presses 1 to confirm.</p>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔴</div>
+          <div>
+            <h3>Tactile Safety Markers</h3>
+            <p>Rubber bands, tape, bumpy caps — identify each medicine by touch, not sight.</p>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🚨</div>
+          <div>
+            <h3>Instant Caregiver Alerts</h3>
+            <p>Missed dose? You get an SMS alert within 15 minutes. No gaps, no guessing.</p>
+          </div>
+        </div>
+      </div>
+
+      <button id="btn-get-started" class="btn btn-cta">
+        Get Started <span class="arrow">→</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========== SCREEN 3: SETUP (First-Time Profile) ========== -->
+  <section id="screen-setup" class="screen screen-setup">
+    <div class="setup-container">
+      <div class="setup-header">
+        <div class="setup-icon">🛡️</div>
+        <h1>Set Up Your Care Profile</h1>
+        <p>We need a few details to start protecting your loved one.</p>
+      </div>
+
+      <form id="setup-form" class="setup-form">
+        <!-- Caregiver Section -->
+        <div class="form-section">
+          <h3 class="form-section-title">👤 Your Details (Caregiver)</h3>
+          <div class="form-group">
+            <label for="cg_name">Your Name</label>
+            <input type="text" id="cg_name" placeholder="e.g. Priya" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cg_phone">Your Phone</label>
+              <div class="phone-input">
+                <span class="country-code">+91</span>
+                <input type="tel" id="cg_phone" placeholder="98765 43210" maxlength="10" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cg_whatsapp">WhatsApp (Optional)</label>
+              <div class="phone-input">
+                <span class="country-code">+91</span>
+                <input type="tel" id="cg_whatsapp" placeholder="98765 43210" maxlength="10">
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="cg_passcode">Set a 4-Digit Passcode</label>
+            <input type="password" id="cg_passcode" placeholder="••••" maxlength="4" pattern="[0-9]{4}" required>
+            <span class="form-hint">Used to log in next time</span>
+          </div>
+        </div>
+
+        <!-- Patient Section -->
+        <div class="form-section">
+          <h3 class="form-section-title">❤️ Patient Details (Your Parent / Loved One)</h3>
+          <div class="form-group">
+            <label for="pt_name">Their Name</label>
+            <input type="text" id="pt_name" placeholder="e.g. Amma, Surya" required>
+          </div>
+          <div class="form-group">
+            <label for="pt_phone">Their Phone Number</label>
+            <div class="phone-input">
+              <span class="country-code">+91</span>
+              <input type="tel" id="pt_phone" placeholder="91234 56789" maxlength="10" required>
+            </div>
+            <span class="form-hint">Can be a basic keypad phone — no smartphone needed</span>
+          </div>
+          <div class="form-group">
+            <label for="pt_language">Preferred Call Language</label>
+            <select id="pt_language">
+              <option value="ta">தமிழ் — Tamil</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Consent -->
+        <div class="consent-box">
+          <label class="checkbox-label">
+            <input type="checkbox" id="consent_check" required>
+            <span>I agree to the <a href="#" class="link">Privacy Policy</a> and consent to automated voice calls and SMS to the phone numbers provided, as per the DPDP Act 2023.</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-cta" id="btn-save-profile">
+          Save & Continue <span class="arrow">→</span>
+        </button>
+      </form>
+      <div id="setup-alert" class="alert hidden"></div>
+    </div>
+  </section>
+
+  <!-- ========== SCREEN 4: MAIN DASHBOARD ========== -->
+  <section id="screen-dashboard" class="screen screen-dashboard">
+
+    <!-- Left Sidebar -->
+    <nav id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <span class="sidebar-logo">💊</span>
+          <span class="sidebar-title">MedAssist AI</span>
+        </div>
+        <button id="btn-close-sidebar" class="btn-close-sidebar">✕</button>
+      </div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-item active" data-section="schedules">
+          <span class="sidebar-icon">📋</span>
+          <span>Schedules</span>
+        </li>
+        <li class="sidebar-item" data-section="logs">
+          <span class="sidebar-icon">📊</span>
+          <span>Adherence Logs</span>
+        </li>
+        <li class="sidebar-item" data-section="subscription">
+          <span class="sidebar-icon">💎</span>
+          <span>Subscription</span>
+        </li>
+      </ul>
+      <div class="sidebar-divider"></div>
+      <ul class="sidebar-menu sidebar-menu-bottom">
+        <li class="sidebar-item" id="btn-logout">
+          <span class="sidebar-icon">🚪</span>
+          <span>Logout</span>
+        </li>
+        <li class="sidebar-item sidebar-danger" id="btn-delete-account">
+          <span class="sidebar-icon">⚠️</span>
+          <span>Delete Account</span>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <div class="sidebar-profile">
+          <div class="profile-badge-sm" id="sidebar-profile-initial">P</div>
+          <div>
+            <div class="sidebar-profile-name" id="sidebar-profile-name">Caregiver</div>
+            <div class="sidebar-profile-phone" id="sidebar-profile-phone">+91 ...</div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
+
+    <!-- Dashboard Header -->
+    <header class="app-header">
+      <div class="container header-container">
+        <div class="header-left">
+          <button id="btn-open-sidebar" class="btn-hamburger" title="Menu">
+            <span class="hamburger-arrow">☰</span>
+          </button>
+          <div class="brand">
+            <div class="brand-icon">💊</div>
+            <div>
+              <h1>MedAssist AI</h1>
+              <p class="subtitle" id="header-patient-name">Protecting your loved one</p>
+            </div>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="system-status">
+            <span class="status-dot"></span>
+            <span class="status-text">Active</span>
+          </div>
+          <div class="profile-badge" id="profile-badge" title="Your Profile">
+            <span id="profile-initial">P</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Subscription Banner -->
+    <div class="container">
+      <div id="subscription-banner" class="sub-banner sub-free">
+        <div class="sub-info">
+          <span class="sub-badge">FREE TRIAL</span>
+          <span class="sub-text">1 schedule allowed. Upgrade for unlimited schedules.</span>
+        </div>
+        <button id="btn-subscribe" class="btn btn-subscribe">Subscribe ₹199/month</button>
+      </div>
+    </div>
+
+    <!-- Main Dashboard Content -->
+    <main class="container main-content">
+
+      <!-- Today's Schedules -->
+      <section class="card schedule-card">
+        <div class="schedule-header">
+          <div>
+            <h2>Today's Active Schedules</h2>
+            <p class="table-subtitle" id="schedule-count">No schedules yet</p>
+          </div>
+          <button id="btn-add-schedule" class="btn btn-add">
+            <span class="plus">+</span> Add Schedule
+          </button>
+        </div>
+        <div id="schedule-list" class="schedule-list">
+          <div class="empty-schedule">
+            <div class="empty-icon">📋</div>
+            <p>No medication schedules added yet.</p>
+            <p class="empty-hint">Click "+ Add Schedule" to set up the first reminder.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Print Report Header (visible only in print) -->
+      <div class="print-report-header">
+        <h1>MedAssist AI — 30-Day Adherence Report</h1>
+        <p id="print-report-subtitle">Generated for patient care review</p>
+      </div>
+
+      <!-- Adherence Logs -->
+      <section class="card table-card">
+        <div class="table-header-row">
+          <div>
+            <h2>Adherence History</h2>
+            <p class="table-subtitle">Voice call confirmation status</p>
+          </div>
+          <div class="adherence-actions-row" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <button id="btn-export-report" class="btn-export" title="Export 30-Day Doctor's Report">📄 Export Report</button>
+            <button id="btn-refresh-logs" class="btn btn-icon" title="Refresh">🔄 Refresh</button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="logs-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Medication</th>
+                <th>Dosage</th>
+                <th>Status</th>
+                <th>Retries</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="logs-table-body">
+              <tr>
+                <td colspan="6" class="empty-state">Adherence logs will appear here after reminders trigger.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </section>
+
+  <!-- ========== SLIDE-OUT: Add Schedule Panel ========== -->
+  <div id="schedule-overlay" class="overlay hidden"></div>
+  <aside id="schedule-panel" class="slide-panel hidden">
+    <div class="panel-header">
+      <h2 id="panel-title">Add Medication Schedule</h2>
+      <button id="btn-close-panel" class="btn-close">✕</button>
+    </div>
+    <form id="schedule-form" class="panel-form">
+      <input type="hidden" id="edit_schedule_id" value="">
+      <div class="form-group">
+        <label for="med_name">Medication Name</label>
+        <input type="text" id="med_name" placeholder="e.g. Metformin 500mg" required>
+      </div>
+      <div class="time-picker-row">
+        <div class="form-group">
+          <label for="time_str">Reminder Time</label>
+          <input type="time" id="time_str" required>
+        </div>
+        <div class="time-indicator" id="time-indicator">
+          <span class="time-indicator-icon" id="time-indicator-icon">☀️</span>
+          <span id="time-indicator-label">AM</span>
+        </div>
+      </div>
+      <div class="time-format-toggle">
+        <button type="button" class="toggle-switch" id="toggle-24hr" title="Toggle 24-hour format"></button>
+        <label for="toggle-24hr">Use 24-hour format</label>
+      </div>
+      <div class="form-group" style="margin-top:16px">
+        <label for="quantity">Quantity</label>
+        <select id="quantity">
+          <option value="1 Tablet">1 Tablet</option>
+          <option value="2 Tablets">2 Tablets</option>
+          <option value="3 Tablets">3 Tablets</option>
+          <option value="4 Tablets">4 Tablets</option>
+          <option value="5 Tablets">5 Tablets</option>
+          <option value="5 ml">5 ml</option>
+          <option value="10 ml">10 ml</option>
+          <option value="1 Capsule">1 Capsule</option>
+          <option value="2 Capsules">2 Capsules</option>
+          <option value="3 Capsules">3 Capsules</option>
+          <option value="5 Capsules">5 Capsules</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="food_instruction">Food Instructions</label>
+        <select id="food_instruction">
+          <option value="After Food">🍽️ After Food</option>
+          <option value="Before Food">⏰ Before Food</option>
+          <option value="With Food">🥄 With Food</option>
+          <option value="Any Time">🕐 Any Time</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="tactile_marker">Tactile Container Marker</label>
+        <select id="tactile_marker">
+          <optgroup label="Free Markers">
+            <option value="1 Rubber Band">🟢 1 Rubber Band</option>
+            <option value="2 Rubber Bands">🟢 2 Rubber Bands</option>
+            <option value="1 Bindi">🔴 1 Bindi on Cap</option>
+            <option value="2 Bindis">🔴 2 Bindis on Cap</option>
+            <option value="Tape on Cap">🟡 Tape on Cap</option>
+            <option value="Rough Tape">🟤 Rough Tape</option>
+          </optgroup>
+          <optgroup label="Organizer Markers">
+            <option value="Morning Compartment">🌅 Morning Compartment</option>
+            <option value="Afternoon Compartment">☀️ Afternoon Compartment</option>
+            <option value="Night Compartment">🌙 Night Compartment</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- Bottle Photo Upload -->
+      <div class="form-group">
+        <label>Bottle Photo (Optional)</label>
+        <div class="photo-upload-area" id="photo-upload-area">
+          <input type="file" id="bottle_photo" accept="image/*" capture="environment">
+          <div class="upload-placeholder" id="upload-placeholder">
+            <span class="upload-icon">📷</span>
+            Tap to snap a photo of the marked bottle
+          </div>
+          <div id="photo-preview-row" class="photo-upload-row hidden">
+            <img id="photo-preview" class="photo-preview" alt="Bottle preview" src="">
+            <button type="button" id="btn-remove-photo" class="btn-remove-photo">✕ Remove</button>
+          </div>
+        </div>
+        <input type="hidden" id="bottle_image_url" value="">
+      </div>
+
+      <button type="submit" class="btn btn-cta" id="btn-save-schedule">Save Schedule</button>
+    </form>
+    <div id="schedule-alert" class="alert hidden"></div>
+  </aside>
+
+  <!-- ========== LOGIN MODAL ========== -->
+  <div id="login-overlay" class="overlay hidden"></div>
+  <div id="login-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Welcome Back 👋</h2>
+      <p>Enter your phone number and passcode to continue.</p>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login_phone">Phone Number</label>
+          <div class="phone-input">
+            <span class="country-code">+91</span>
+            <input type="tel" id="login_phone" placeholder="98765 43210" maxlength="10" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="login_passcode">Passcode</label>
+          <input type="password" id="login_passcode" placeholder="••••" maxlength="4" required>
+        </div>
+        <button type="submit" class="btn btn-cta">Log In</button>
+      </form>
+      <div id="login-alert" class="alert hidden"></div>
+      <p class="modal-footer">New here? <a href="#" id="link-signup">Create an account</a></p>
+    </div>
+  </div>
+
+  <!-- ========== CAUTION MODAL: LOGOUT ========== -->
+  <div id="logout-overlay" class="overlay hidden"></div>
+  <div id="logout-modal" class="caution-modal hidden">
+    <div class="caution-content">
+      <div class="caution-icon">🚪</div>
+      <h2>Log Out?</h2>
+      <p>You are about to log out of your MedAssist AI account. Your scheduled reminders will <strong>continue running</strong> in the background.</p>
+      <p class="caution-note">You can log back in anytime using your phone number and passcode.</p>
+      <div class="caution-actions">
+        <button id="btn-cancel-logout" class="btn btn-secondary-outline">Cancel</button>
+        <button id="btn-confirm-logout" class="btn btn-warning">Yes, Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== CAUTION MODAL: DELETE ACCOUNT ========== -->
+  <div id="delete-overlay" class="overlay hidden"></div>
+  <div id="delete-modal" class="caution-modal hidden">
+    <div class="caution-content caution-danger">
+      <div class="caution-icon">⚠️</div>
+      <h2>Delete Your Account?</h2>
+      <p class="caution-warning-text">⛔ This action is <strong>permanent and irreversible</strong>.</p>
+      <ul class="caution-list">
+        <li><strong>All your account details</strong> (Name, Phone Numbers, Passcode & Consent records) will be permanently deleted</li>
+        <li>All medication schedules & food instructions will be deleted</li>
+        <li>All adherence history and voice call logs will be erased</li>
+        <li>Your patient will stop receiving automated reminder calls</li>
+        <li>Your subscription (if active) will be cancelled immediately</li>
+      </ul>
+      <div class="caution-confirm-box">
+        <label class="checkbox-label">
+          <input type="checkbox" id="delete-confirm-check">
+          <span>I understand that my account details, schedules, and logs will be permanently deleted and all reminders will stop.</span>
+        </label>
+      </div>
+      <div class="caution-actions">
+        <button id="btn-cancel-delete" class="btn btn-secondary-outline">Cancel</button>
+        <button id="btn-confirm-delete" class="btn btn-danger" disabled>Permanently Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SAFETY WARNING MODAL: Polypharmacy ========== -->
+  <div id="safety-warning-overlay" class="overlay hidden"></div>
+  <div id="safety-warning-modal" class="caution-modal hidden">
+    <div class="caution-content safety-warning-content">
+      <div class="caution-icon">⚠️</div>
+      <h2>High Medication Quantity Detected</h2>
+      <p>You are scheduling <strong>5 or more tablets/capsules</strong> or managing <strong>multiple concurrent medications</strong>. Please double-check the doctor's physical prescription before proceeding.</p>
+      <div class="caution-actions">
+        <button id="btn-cancel-safety" class="btn btn-secondary-outline">Go Back</button>
+        <button id="btn-confirm-safety" class="btn-acknowledge-warning">I've Verified — Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="/static/app.js"></script>
+  <script>
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/static/sw.js')
+          .then(reg => console.log('SW registered:', reg.scope))
+          .catch(err => console.log('SW registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>

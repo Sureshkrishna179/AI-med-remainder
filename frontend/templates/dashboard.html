@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — MediVoice AI</title>
+    <meta name="description" content="AI-Based Medicine Reminder with Voice Alert — Caregiver Administration Dashboard">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- ── Header Bar ────────────────────────────────────────── -->
+    <header class="app-header">
+        <div class="brand">
+            <i class="fa-solid fa-laptop-medical"></i>
+            <span>MediVoice AI</span>
+        </div>
+        <div class="header-right">
+            <span class="date-text" id="header-date"></span>
+            <button class="btn btn-secondary btn-sm" id="test-voice-btn" title="Test Voice Alert">
+                <i class="fa-solid fa-volume-high"></i> Test Voice
+            </button>
+            <button class="btn btn-secondary btn-sm" id="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </header>
+
+    <!-- ── Main Content ──────────────────────────────────────── -->
+    <div class="main-container">
+
+        <!-- Voice Status Widget -->
+        <div class="voice-status-bar">
+            <div class="pulse-dot"></div>
+            <span>AI Voice Engine is running in the background — monitoring MySQL for due medication alarms every 30 seconds.</span>
+        </div>
+
+        <!-- Stats Strip -->
+        <div class="stats-strip">
+            <div class="stat-card">
+                <div class="stat-icon cyan"><i class="fa-solid fa-calendar-check"></i></div>
+                <div>
+                    <div class="stat-value" id="stat-total-schedules">0</div>
+                    <div class="stat-label">Total Schedules</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fa-solid fa-bell"></i></div>
+                <div>
+                    <div class="stat-value" id="stat-active-schedules">0</div>
+                    <div class="stat-label">Active Alarms</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon red"><i class="fa-solid fa-clipboard-check"></i></div>
+                <div>
+                    <div class="stat-value" id="stat-taken-count">0</div>
+                    <div class="stat-label">Doses Confirmed</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Content Grid (Form + Schedule Table) ──────────── -->
+        <div class="content-grid">
+
+            <!-- Left: Add Schedule Form -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fa-solid fa-plus-circle"></i> Add New Schedule</h2>
+                </div>
+
+                <form id="scheduleForm">
+                    <div class="form-group">
+                        <label class="form-label" for="patient_name">Patient Name</label>
+                        <input type="text" class="form-input" id="patient_name" placeholder="e.g., Grandpa, Mrs. Sharma" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="medicine_name">Medicine Name</label>
+                        <input type="text" class="form-input" id="medicine_name" placeholder="e.g., Paracetamol, Vitamin D" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="dosage">Dosage Instructions</label>
+                        <input type="text" class="form-input" id="dosage" placeholder="e.g., 1 Tablet after food" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="alarm_time">Voice Alert Time</label>
+                        <input type="time" class="form-input" id="alarm_time" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fa-solid fa-bolt"></i> Save &amp; Activate AI Engine
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right: Active Schedules Table -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fa-solid fa-list-check"></i> Active Medication Schedules</h2>
+                    <button class="btn btn-secondary btn-sm" onclick="loadSchedules()">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                    </button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Medicine</th>
+                                <th>Dosage</th>
+                                <th>Alert Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedules-tbody">
+                            <tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Adherence Logs Table ──────────────────────────── -->
+        <div class="glass-card">
+            <div class="card-header">
+                <h2 class="card-title"><i class="fa-solid fa-clipboard-list"></i> Daily Adherence Log</h2>
+                <button class="btn btn-secondary btn-sm" onclick="loadLogs()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                </button>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Triggered At</th>
+                            <th>Patient</th>
+                            <th>Medicine</th>
+                            <th>Dosage</th>
+                            <th>Scheduled</th>
+                            <th>Voice Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-tbody">
+                        <tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Edit Schedule Modal ───────────────────────────────── -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <span class="modal-title">Edit Schedule</span>
+                <button class="btn btn-icon btn-secondary" id="close-edit-modal" style="border:none; background:transparent; font-size:1.1rem; cursor:pointer; color:var(--text-secondary);">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <form id="editForm">
+                <div class="form-group">
+                    <label class="form-label">Patient Name</label>
+                    <input type="text" class="form-input" id="edit-patient" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Medicine Name</label>
+                    <input type="text" class="form-input" id="edit-medicine" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Dosage</label>
+                    <input type="text" class="form-input" id="edit-dosage" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Alert Time</label>
+                    <input type="time" class="form-input" id="edit-time" required>
+                </div>
+                <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:20px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── Scripts ───────────────────────────────────────────── -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+        // Set current date in header
+        const dateEl = document.getElementById("header-date");
+        if (dateEl) {
+            const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+            dateEl.textContent = new Date().toLocaleDateString('en-US', options);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+sqlalchemy
+apscheduler
+twilio
+python-dotenv
+python-multipart
+razorpay
