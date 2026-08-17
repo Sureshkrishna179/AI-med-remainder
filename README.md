@@ -58,7 +58,7 @@ AI-med-remainder/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Sureshkrishna17/AI-med-remainder.git
+git clone https://github.com/Sureshkrishna179/AI-med-remainder.git
 cd AI-med-remainder
 ```
 
